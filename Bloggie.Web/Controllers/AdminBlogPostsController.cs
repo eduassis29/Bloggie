@@ -1,12 +1,15 @@
 ﻿using Bloggie.Web.Models.Domain;
 using Bloggie.Web.Models.ViewModels;
 using Bloggie.Web.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Reflection.Metadata.Ecma335;
 using System.Xml.Linq;
 
 namespace Bloggie.Web.Controllers {
+
+    [Authorize(Roles = "SuperAdmin, Admin")]
     public class AdminBlogPostsController : Controller {
 
         private readonly ITagRepository _tagRepository;
@@ -72,7 +75,6 @@ namespace Bloggie.Web.Controllers {
             var blogs = await _blogPostRepository.GetAllBlogAsync();
             return View(blogs);
         }
-
 
         [HttpGet]
         public async Task<IActionResult> EditAsync(Guid id) {

@@ -2,17 +2,21 @@
 using Bloggie.Web.Models.Domain;
 using Bloggie.Web.Models.ViewModels;
 using Bloggie.Web.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bloggie.Web.Controllers {
+
+    [Authorize(Roles = "SuperAdmin, Admin")]
     public class AdminTagsController : Controller {
         private readonly ITagRepository _tagRepository;
 
         public AdminTagsController(ITagRepository tagRepository){
             this._tagRepository = tagRepository;
         }
+
 
         [HttpGet]
         public IActionResult Add() {
