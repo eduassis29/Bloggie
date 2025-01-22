@@ -53,7 +53,7 @@ namespace Bloggie.Web.Controllers {
             };
             return View(model);
         }
-
+         
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel loginViewModel) {
 
