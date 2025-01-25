@@ -1,0 +1,35 @@
+﻿@model Bloggie.Web.Models.ViewModels.UserViewModel
+
+<div class="bg-secondary bg-opacity-10 py-2">
+    <div class="container">
+        <h1>User List - Admin Functionality</h1>
+    </div>
+</div>
+
+<div class="container py-5">
+    @if(Model.Users != null || Model.Users.Any()) {  
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach(var item in Model.Users) {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.Username</td>
+                        <td>@item.EmailAddress</td>
+                    </tr>
+
+                }
+            </tbody>
+        </table>
+    }
+    else{
+        <p>There is no User</p>
+    }
+</div>
