@@ -6,8 +6,7 @@ namespace Bloggie.Web.Repositories {
     public class UserRepository : IUserRepository {
         private readonly AuthDbContext authDbContext;
 
-        public UserRepository(AuthDbContext authDbContext)
-        {
+        public UserRepository(AuthDbContext authDbContext) {
             this.authDbContext = authDbContext;
         }
 
@@ -16,7 +15,7 @@ namespace Bloggie.Web.Repositories {
 
             var superAdminUser = await authDbContext.Users.FirstOrDefaultAsync(x => x.Email == "superAdmin@bloggie.com");
 
-            if (superAdminUser != null) { 
+            if (superAdminUser != null) {
                 users.Remove(superAdminUser);
             }
 
