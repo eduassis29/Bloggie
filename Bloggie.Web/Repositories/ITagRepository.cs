@@ -2,7 +2,7 @@
 
 namespace Bloggie.Web.Repositories {
     public interface ITagRepository {
-        Task<IEnumerable<Tag>> GetAllTagsAsync();
+        Task<IEnumerable<Tag>> GetAllTagsAsync(string? searchQuery = null, string? sortBy = null, string? sortDirection = null);
 
         Task<Tag?> GetTagsAsync(Guid id);
 

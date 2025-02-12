@@ -2,6 +2,7 @@
 using Bloggie.Web.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Azure.Core;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Bloggie.Web.Controllers {
     public class AccountController : Controller {
@@ -26,22 +27,25 @@ namespace Bloggie.Web.Controllers {
 
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel) {
-            var identityUser = new IdentityUser {
-                UserName = registerViewModel.Username,
-                Email = registerViewModel.Email,
-                PasswordHash = registerViewModel.Password,
-            };
+            if (ModelState.IsValid) {
 
-            var identityResult = await userManager.CreateAsync(identityUser, registerViewModel.Password);
+                var identityUser = new IdentityUser {
+                    UserName = registerViewModel.Username,
+                    Email = registerViewModel.Email,
+                    PasswordHash = registerViewModel.Password,
+                };
 
-            if (identityResult.Succeeded) {
-                //asing this user the User role
-                var roleIdentityResult = await userManager.AddToRoleAsync(identityUser, "User");
-                if (roleIdentityResult.Succeeded) { 
-                    //show success notification
-                    return RedirectToAction("Register");
-                }
-            };
+                var identityResult = await userManager.CreateAsync(identityUser, registerViewModel.Password);
+
+                if (identityResult.Succeeded) {
+                    //asing this user the User role
+                    var roleIdentityResult = await userManager.AddToRoleAsync(identityUser, "User");
+                    if (roleIdentityResult.Succeeded) { 
+                        //show success notification
+                        return RedirectToAction("Register");
+                    }
+                };
+            }
 
             return View();
         }
@@ -56,6 +60,9 @@ namespace Bloggie.Web.Controllers {
          
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel loginViewModel) {
+            if (!ModelState.IsValid) {
+                return View();
+            }
 
             var signInResult = await signInManager.PasswordSignInAsync(loginViewModel.Username, loginViewModel.Password, false, false);
             if (signInResult != null && signInResult.Succeeded) {

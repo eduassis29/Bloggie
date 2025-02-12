@@ -10,7 +10,7 @@
 
     <div class="mb-3 d-flex justify-content-end">
         <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#modalCreateUser">
-            Creaete User
+            Create User
         </button>
     </div>
 
@@ -21,6 +21,7 @@
                     <th>Id</th>
                     <th>Username</th>
                     <th>Email</th>
+                    <th> </th>
                 </tr>
             </thead>
 
@@ -30,6 +31,9 @@
                         <td>@item.Id</td>
                         <td>@item.Username</td>
                         <td>@item.EmailAddress</td>
+                        <td><form method="post" asp-controller="AdminUsers" 
+                            asp-action="Delete" 
+                            asp-route-id="@item.Id"> <button type="submit" class="btn btn-danger">Delete</button> </form></td>
                     </tr>
 
                 }

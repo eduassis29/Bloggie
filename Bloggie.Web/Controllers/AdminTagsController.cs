@@ -13,7 +13,7 @@ namespace Bloggie.Web.Controllers {
     public class AdminTagsController : Controller {
         private readonly ITagRepository _tagRepository;
 
-        public AdminTagsController(ITagRepository tagRepository){
+        public AdminTagsController(ITagRepository tagRepository) {
             this._tagRepository = tagRepository;
         }
 
@@ -27,6 +27,11 @@ namespace Bloggie.Web.Controllers {
         [ActionName("Add")]
         public async Task<IActionResult> Add(AddTagRequest addTagRequest) {
             // Mapeando AddTagRequest para Tag no dominio em model
+            ValidateAddTagRequest(addTagRequest);
+
+            if (!ModelState.IsValid) {
+                return View();
+            }
 
             var tag = new Tag {
                 NameTag = addTagRequest.Name,
@@ -40,10 +45,14 @@ namespace Bloggie.Web.Controllers {
 
         [HttpGet]
         [ActionName("List")]
-        public async Task<IActionResult> List() {
+        public async Task<IActionResult> List(string? searchQuery, string? sortBy, string? sortDirection) {
+
+            ViewBag.SearchQuery = searchQuery;
+            ViewBag.SortBy = sortBy;
+            ViewBag.SortDirection = sortDirection;
             // Usa DbContext para ler o banco de dados
 
-            var tags = await _tagRepository.GetAllTagsAsync();
+            var tags = await _tagRepository.GetAllTagsAsync(searchQuery, sortBy, sortDirection);
 
             return View(tags);
         }
@@ -53,7 +62,7 @@ namespace Bloggie.Web.Controllers {
             //Metodo para editar uma tag pelo id fornecido
             var tag = await _tagRepository.GetTagsAsync(id);
 
-            if(tag != null) {
+            if (tag != null) {
                 var editTagRequest = new EditTagRequest {
                     Id = tag.Id,
                     NameTag = tag.NameTag,
@@ -83,7 +92,7 @@ namespace Bloggie.Web.Controllers {
             }
 
 
-            return RedirectToAction("Edit", new {id = editTagRequest.Id});
+            return RedirectToAction("Edit", new { id = editTagRequest.Id });
         }
 
         [HttpPost]
@@ -96,7 +105,15 @@ namespace Bloggie.Web.Controllers {
                 return RedirectToAction("List");
             }
             //Mostra Notificação de Erro
-            return RedirectToAction("Edit", new {id = editTagRequest.Id});
+            return RedirectToAction("Edit", new { id = editTagRequest.Id });
+        }
+
+        private void ValidateAddTagRequest(AddTagRequest addTagRequest) {
+            if (addTagRequest.Name != null && addTagRequest.DisplayName != null) {
+                if (addTagRequest.Name.Contains(' ')) {
+                    ModelState.AddModelError("Name", "Name Cannot be have spaces");
+                }
+            }
         }
     }
 }

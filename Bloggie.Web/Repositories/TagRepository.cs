@@ -30,9 +30,31 @@ namespace Bloggie.Web.Repositories {
             return null;
         }
 
-        public async Task<IEnumerable<Tag>> GetAllTagsAsync() {
-            return await _bloggieDbContext.Tags.ToListAsync();
+        public async Task<IEnumerable<Tag>> GetAllTagsAsync(string? searchQuery, string? sortBy = null, string? sortDirection = null) {
+            var query = _bloggieDbContext.Tags.AsQueryable();
+            //Filtering
+            if (string.IsNullOrWhiteSpace(searchQuery) == false){
+                query = query.Where(x => x.NameTag.Contains(searchQuery) || x.DisplayNameTag.Contains(searchQuery));
+            }
+
+            //Sorting
+            if (string.Equals(sortBy, "Name", StringComparison.OrdinalIgnoreCase)){
+                var isDesc = string.Equals(sortDirection, "Desc", StringComparison.OrdinalIgnoreCase);
+                query = isDesc ? query.OrderByDescending(x => x.NameTag) : query.OrderBy(x => x.NameTag);
+            }
+
+            if (string.Equals(sortBy, "DisplayNameTag", StringComparison.OrdinalIgnoreCase)){
+                var isDesc = string.Equals(sortDirection, "Desc", StringComparison.OrdinalIgnoreCase);
+                query = isDesc ? query.OrderByDescending(x => x.DisplayNameTag) : query.OrderBy(x => x.DisplayNameTag);
+            }
+
+            //Paginatiom
+
+
+
+            return await query.ToListAsync();
         }
+
 
         public async Task<Tag?> GetTagsAsync(Guid id) {
             return await _bloggieDbContext.Tags.FindAsync(id);
